@@ -21,7 +21,7 @@ curl -X "POST" "http://localhost:8000/balances/" \
     "account_id": 1
 }'
 ```
-### List of book
+### List of balances
 
 ```
 curl "http://localhost:8000/balances" \
