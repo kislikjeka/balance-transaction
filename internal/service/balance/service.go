@@ -80,11 +80,11 @@ func (s *Service) TransferFounds(t *domain.Balance, r *domain.Balance, val float
 	if err != nil {
 		return err
 	}
-	err = s.repo.Update(t)
+	err = s.Update(t)
 	if err != nil {
 		return err
 	}
-	err = s.repo.Update(r)
+	err = s.Update(r)
 	if err != nil {
 		return err
 	}
