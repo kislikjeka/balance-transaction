@@ -1,0 +1,7 @@
+db:
+  dbname: "postgres"
+  sslmode: "disable"
+
+server:
+  host : "localhost"
+  port: "8000"
