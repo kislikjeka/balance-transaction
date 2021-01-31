@@ -1,25 +1,37 @@
 package main
 
 import (
-	"TransactionTest/cmd/api/handler"
+	"TransactionTest/internal/domain"
 	pgrepo "TransactionTest/internal/repository/postgres"
 	"TransactionTest/internal/service/balance"
 	"TransactionTest/pkg/config"
 	"TransactionTest/pkg/db/postgres"
-	"TransactionTest/pkg/server"
-	"context"
+	"flag"
+	"fmt"
 	"github.com/joho/godotenv"
 	_ "github.com/lib/pq"
 	"github.com/sirupsen/logrus"
 	"github.com/spf13/viper"
 	"os"
-	"os/signal"
-	"syscall"
-	"time"
 )
 
 func main() {
-	logrus.SetFormatter(new(logrus.JSONFormatter))
+	var transID int
+	var resID int
+	var val float64
+	flag.IntVar(&transID, "t", 0, "Specify trans ID.")
+	flag.IntVar(&resID, "r", 0, "Specify res ID.")
+	flag.Float64Var(&val, "v", 0, "Specify Value.")
+
+	flag.Usage = func() {
+		fmt.Printf("Usage of our Program: \n")
+		fmt.Printf("./bin/transsaction -t 1 -r 2 -v 3.5\n")
+	}
+	flag.Parse()
+
+	if transID == 0 || resID == 0 || val == 0 {
+		logrus.Fatalf("Argument are requierd")
+	}
 
 	if err := config.InitConfig("config"); err != nil {
 		logrus.Fatalf("error initializing configs: %s", err.Error())
@@ -44,33 +56,21 @@ func main() {
 
 	repo := pgrepo.NewBalanceRepo(db)
 	service := balance.NewService(repo)
-	hand := handler.NewHandler(service)
 
-	cfg := &server.HTTPConfig{
-		Host:         viper.GetString("server.host"),
-		Port:         viper.GetString("server.port"),
-		WriteTimeout: 10 * time.Second,
-		ReadTimeout:  5 * time.Second,
+	b1, err := service.Get(domain.ID(transID))
+	if err != nil {
+		logrus.Fatal(err)
 	}
-	// HTTP Server
-	srv := server.NewServer(cfg, hand.InitRoutes())
-	go func() {
-		if err := srv.Run(); err != nil {
-			logrus.Errorf("error occurred while running http server: %s\n", err.Error())
-		}
-	}()
-
-	logrus.Info("Server started")
-
-	// Graceful Shutdown
-	quit := make(chan os.Signal, 1)
-	signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT)
-
-	<-quit
-
-	if err := srv.Shutdown(context.Background()); err != nil {
-		logrus.Errorf("error occured on server shutting down: %s", err.Error())
+	b2, err := service.Get(domain.ID(resID))
+	if err != nil {
+		logrus.Fatal(err)
 	}
+	err = service.TransferFounds(b1, b2, float32(val))
+	if err != nil {
+		logrus.Fatal(err)
+	}
+
+	fmt.Println("Successful transaction")
 
 	if err := db.Close(); err != nil {
 		logrus.Errorf("error occured on db connection close: %s", err.Error())

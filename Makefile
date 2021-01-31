@@ -19,6 +19,9 @@ rebuild_app:
 run:
 	docker-compose up app
 
+test:
+	go test -tags testing ./...
+
 .PHONY: postgres createdb dropdb migrateup migratedown
 
 .PHONY: postgres createdb dropdb

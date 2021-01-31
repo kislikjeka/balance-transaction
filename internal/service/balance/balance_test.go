@@ -27,7 +27,6 @@ func Test_CreateAndGet(t *testing.T) {
 
 }
 
-
 func Test_Update(t *testing.T) {
 	repo := newInmem()
 	service := NewService(repo)
@@ -85,16 +84,26 @@ func TestService_TransferFounds(t *testing.T) {
 	b2.ID = i2
 	b1.Balance = 10
 	b2.Balance = 10
-	err := service.TransferFounds(b1, b2,5)
+	err := service.TransferFounds(b1, b2, 5)
 	assert.Nil(t, err)
 	up1, _ := service.Get(i1)
 	up2, _ := service.Get(i2)
 	assert.Equal(t, float32(5), up1.Balance)
 	assert.Equal(t, float32(15), up2.Balance)
 
-	err = service.TransferFounds(b1, b2,10)
+	err = service.TransferFounds(b1, b2, 3.5)
+	assert.Nil(t, err)
+	up1, _ = service.Get(i1)
+	up2, _ = service.Get(i2)
+	assert.Equal(t, float32(1.5), up1.Balance)
+	assert.Equal(t, float32(18.5), up2.Balance)
+
+	err = service.TransferFounds(b1, b2, 10)
 	assert.NotNil(t, err)
 	assert.Equal(t, domain.ErrInvalidBalance, err)
-	assert.Equal(t, float32(5), up1.Balance)
-	assert.Equal(t, float32(15), up2.Balance)
+	assert.Equal(t, float32(1.5), up1.Balance)
+	assert.Equal(t, float32(18.5), up2.Balance)
+
+	err = service.TransferFounds(b1, b1, 10)
+	assert.NotNil(t, err)
 }

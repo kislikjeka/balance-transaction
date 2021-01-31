@@ -44,7 +44,8 @@ func (b *Balance) Validate() error {
 }
 
 func (b *Balance) ChangeBalance(val float32) error {
-	if b.Balance+val < 0 {
+	newBal := b.Balance + val
+	if newBal < 0 {
 		return ErrInvalidBalance
 	}
 	b.Balance = b.Balance + val

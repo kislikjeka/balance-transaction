@@ -9,7 +9,7 @@ import (
 func TestNewBalance(t *testing.T) {
 	b, err := domain.NewBalance(123)
 	assert.Nil(t, err)
-	assert.Equal(t, b.AccountId, uint(123))
+	assert.Equal(t, b.AccountId, domain.ID(123))
 	assert.Equal(t, b.Balance, float32(0))
 	assert.NotNil(t, b.CreatedAt)
 	assert.NotNil(t, b.UpdatedAt)

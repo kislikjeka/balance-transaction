@@ -2,6 +2,7 @@ package balance
 
 import (
 	"TransactionTest/internal/domain"
+	"errors"
 	"time"
 )
 
@@ -68,6 +69,9 @@ func (s *Service) List() ([]*domain.Balance, error) {
 
 //TransferFounds make balance transaction
 func (s *Service) TransferFounds(t *domain.Balance, r *domain.Balance, val float32) error {
+	if t.ID == r.ID {
+		return errors.New("Can't make transaction to yourself")
+	}
 	err := t.ChangeBalance(-val)
 	if err != nil {
 		return err
