@@ -5,6 +5,10 @@
 
 make rebuild_app
 
+## Run
+
+make run
+
 ## Run tests
 
 make test
