@@ -38,27 +38,20 @@ func (r *BalanceRepo) Create(e *domain.Balance) (domain.ID, error) {
 func (r *BalanceRepo) Get(id domain.ID) (*domain.Balance, error) {
 	var balance domain.Balance
 	query := fmt.Sprintf("SELECT id, account_id, balance, created_at, updated_at FROM %s WHERE id = $1", balanceTable)
-	rows, err := r.db.Queryx(query, id)
+	rows := r.db.QueryRowx(query, id)
+	err := rows.Scan(
+		&balance.ID,
+		&balance.AccountId,
+		&balance.Balance,
+		&balance.CreatedAt,
+		&balance.UpdatedAt,
+	)
 	if err != nil {
 		return nil, err
-	}
-	for rows.Next() {
-		err = rows.Scan(
-			&balance.ID,
-			&balance.AccountId,
-			&balance.Balance,
-			&balance.CreatedAt,
-			&balance.UpdatedAt,
-		)
-		if err != nil {
-			return nil, err
-		}
 	}
 
 	return &balance, nil
 }
-
-
 
 //List returns slice of balances
 func (r *BalanceRepo) List() ([]*domain.Balance, error) {

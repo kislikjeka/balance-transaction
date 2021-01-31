@@ -70,7 +70,7 @@ func (h *Handler) deleteBalance(c *gin.Context) {
 	}
 
 	err = h.balanceService.Delete(domain.ID(id))
-	if err !=nil {
+	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 	}
 
@@ -113,9 +113,9 @@ func (h *Handler) listBalances(c *gin.Context) {
 
 func (h *Handler) makeTransaction(c *gin.Context) {
 	var input struct {
-		From domain.ID `json:"from_id"`
-		To domain.ID `json:"to_id"`
-		Value float32 `json:"value"`
+		From  domain.ID `json:"from_id"`
+		To    domain.ID `json:"to_id"`
+		Value float32   `json:"value"`
 	}
 	if err := c.BindJSON(&input); err != nil {
 		newErrorResponse(c, http.StatusBadRequest, err.Error())
@@ -123,17 +123,29 @@ func (h *Handler) makeTransaction(c *gin.Context) {
 	}
 	t, err := h.balanceService.Get(input.From)
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
-		return
+		switch err {
+		case domain.ErrNotFound:
+			newErrorResponse(c, http.StatusNotFound, err.Error())
+			return
+		default:
+			newErrorResponse(c, http.StatusInternalServerError, err.Error())
+			return
+		}
 	}
 
 	r, err := h.balanceService.Get(input.To)
 	if err != nil {
-		newErrorResponse(c, http.StatusInternalServerError, err.Error())
-		return
+		switch err {
+		case domain.ErrNotFound:
+			newErrorResponse(c, http.StatusNotFound, err.Error())
+			return
+		default:
+			newErrorResponse(c, http.StatusInternalServerError, err.Error())
+			return
+		}
 	}
 
-	err = h.balanceService.TransferFounds(t,r,input.Value)
+	err = h.balanceService.TransferFounds(t, r, input.Value)
 	if err != nil {
 		newErrorResponse(c, http.StatusInternalServerError, err.Error())
 		return

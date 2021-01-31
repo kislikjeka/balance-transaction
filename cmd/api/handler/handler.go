@@ -15,7 +15,6 @@ func NewHandler(bs balance.UseCase) *Handler {
 
 func (h *Handler) InitRoutes() *gin.Engine {
 	router := gin.Default()
-	router.Use(gin.)
 
 	b := router.Group("/balances")
 	{
@@ -24,7 +23,7 @@ func (h *Handler) InitRoutes() *gin.Engine {
 		b.GET("/:id", h.getBalanceById)
 		b.PUT("/:id", h.updateBalance)
 		b.DELETE("/:id", h.deleteBalance)
-		b.POST("/trasaction", h.makeTransaction)
+		b.POST("/transaction", h.makeTransaction)
 	}
 
 	return router

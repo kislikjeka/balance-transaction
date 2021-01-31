@@ -31,9 +31,9 @@ func (s *Service) Create(acId domain.ID) (domain.ID, error) {
 //Get a balance
 func (s *Service) Get(id domain.ID) (*domain.Balance, error) {
 	b, err := s.repo.Get(id)
-	//if b == nil {
-	//	return nil, domain.ErrNotFound
-	//}
+	if b == nil {
+		return nil, domain.ErrNotFound
+	}
 	if err != nil {
 		return nil, err
 	}
