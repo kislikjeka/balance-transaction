@@ -41,7 +41,7 @@ curl -x "POST" "http://localhost:8080/balances/transaction" \
      -H 'Accept: application/json'
      -d $'{
     "from_id": 1,
-    "to_id": 1,
+    "to_id": 2,
     "value": 4
 }'
 ```
