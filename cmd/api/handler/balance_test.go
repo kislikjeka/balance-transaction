@@ -125,7 +125,7 @@ func TestHandler_makeTransaction(t *testing.T) {
 			expectedResponseBody: `{"status":"ok"}`,
 		},
 		{
-			name:      "Ok",
+			name:      "Not Found",
 			inputBody: `{"from_id": 1,"to_id": 2,"value": 5}`,
 			balances: map[domain.ID]*domain.Balance{
 				domain.ID(1): {
