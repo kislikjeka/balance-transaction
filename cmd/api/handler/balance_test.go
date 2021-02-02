@@ -1,3 +1,5 @@
+// +build unit_tests all_tests
+
 package handler
 
 import (
