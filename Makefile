@@ -20,7 +20,7 @@ run:
 	docker-compose up app
 
 test:
-	go test -tags testing ./...
+	go test -tags all_tests ./...
 
 .PHONY: postgres createdb dropdb migrateup migratedown
 
